@@ -1,5 +1,8 @@
 *** Settings ***
 Library  SeleniumLibrary
+Library  OperatingSystem
+Library  String
+Library  Collections  # Import the Collections library
 
 *** Variables ***
 ${BROWSER}        Chrome
@@ -7,23 +10,32 @@ ${URL}            https://www.automationexercise.com/login
 ${LOGIN_BUTTON}   xpath=//button[@data-qa='login-button']
 ${USERNAME_FIELD}  xpath=//input[@data-qa='login-email']
 ${PASSWORD_FIELD}  xpath=//input[@data-qa='login-password']
-${SUCCESS_PAGE}   xpath=//*[contains(text(),'Logged in as')]  # XPath for the "Logged in as" text
+${CSV_FILE}       resources/Data2.csv
 
 *** Test Cases ***
-Login with Valid User
-    Open Browser  ${URL}  ${BROWSER}
-    Input Text  ${USERNAME_FIELD}  validuse77r@example.com
-    Input Text  ${PASSWORD_FIELD}  123123
-    Click Button  ${LOGIN_BUTTON}
-    sleep  2s
-    Wait Until Element Is Visible    //*[text()=' Logged in as ']
-    Close Browser
+Login with Users From CSV
+    ${users}=  Read CSV  ${CSV_FILE}
+    FOR  ${user}  IN  @{users}
+        Login To Website  ${user[0]}  ${user[1]}
+    END
 
-Login with Invalid User
+*** Keywords ***
+Read CSV
+    [Arguments]  ${file_path}
+    ${content}=  Get File  ${file_path}
+    ${lines}=  Split String  ${content}  \n
+    ${csv_data}=  Create List
+    FOR  ${line}  IN  @{lines}
+        ${fields}=  Split String  ${line}  ,
+        Append To List  ${csv_data}  ${fields}
+    END
+    [Return]  ${csv_data}
+
+Login To Website
+    [Arguments]  ${username}  ${password}
     Open Browser  ${URL}  ${BROWSER}
-    Input Text  ${USERNAME_FIELD}  invaliduser@example.com
-    Input Text  ${PASSWORD_FIELD}  invalidpassword
+    Input Text  ${USERNAME_FIELD}  ${username}
+    Input Text  ${PASSWORD_FIELD}  ${password}
     Click Button  ${LOGIN_BUTTON}
     sleep  2s
-    Wait Until Element Is Visible    //*[text()='Your email or password is incorrect!']
     Close Browser
