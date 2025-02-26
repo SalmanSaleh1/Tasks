@@ -2,7 +2,7 @@
 Library  SeleniumLibrary
 Library  OperatingSystem
 Library  String
-Library  Collections  # Import the Collections library
+Library  Collections
 
 *** Variables ***
 ${BROWSER}        Chrome
@@ -13,10 +13,22 @@ ${PASSWORD_FIELD}  xpath=//input[@data-qa='login-password']
 ${CSV_FILE}       resources/Data2.csv
 
 *** Test Cases ***
-Login with Users From CSV
+Login with Valid Users
     ${users}=  Read CSV  ${CSV_FILE}
     FOR  ${user}  IN  @{users}
-        Login To Website  ${user[0]}  ${user[1]}
+        ${username}=  Get From List  ${user}  0
+        ${password}=  Get From List  ${user}  1
+        ${valid}=  Get From List  ${user}  2
+        Run Keyword If  '${valid}' == 'True'  Login To Website  ${username}  ${password}
+    END
+
+Login with Invalid Users
+    ${users}=  Read CSV  ${CSV_FILE}
+    FOR  ${user}  IN  @{users}
+        ${username}=  Get From List  ${user}  0
+        ${password}=  Get From List  ${user}  1
+        ${valid}=  Get From List  ${user}  2
+        Run Keyword If  '${valid}' == 'False'  Login To Website  ${username}  ${password}
     END
 
 *** Keywords ***

@@ -1,2 +1,3 @@
-validuse77r@example.com,123123
-invaliduser@example.com,invalidpassword
+username,password,valid
+validuse77r@example.com,123123,True
+invaliduser@example.com,invalidpassword,False
