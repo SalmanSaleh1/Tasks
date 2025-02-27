@@ -22,3 +22,8 @@ Brief Overview: Logs in with valid credentials, searches for "Sauce Labs Bolt T-
 # Task 4: Appium Test Script for Mobile App Login
 
 Brief Overview: This Python script uses Appium to automate the login process of a mobile app. It launches the app, locates the username and password fields, enters test data, clicks the login button, and validates the login success by checking the visibility of the "PRODUCTS" page.
+
+# Task 5: Extract Error Messages from Appium Log File
+
+Brief Overview:
+This Python script reads an Appium log file, filters for error messages, and prints them. It helps quickly identify issues in the test execution by displaying only the error logs.
