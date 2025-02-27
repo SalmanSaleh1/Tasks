@@ -27,3 +27,8 @@ Brief Overview: This Python script uses Appium to automate the login process of 
 
 Brief Overview:
 This Python script reads an Appium log file, filters for error messages, and prints them. It helps quickly identify issues in the test execution by displaying only the error logs.
+
+# Task 6: Gesture-Based Mobile Menu Automation
+
+Brief Overview:
+This Python script automates swiping, tapping, and scrolling gestures to interact with a mobile app's menu. It validates the correct loading of specific items (image, name, price) using reusable OOP components.
