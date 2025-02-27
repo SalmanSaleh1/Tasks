@@ -31,4 +31,7 @@ This Python script reads an Appium log file, filters for error messages, and pri
 # Task 6: Gesture-Based Mobile Menu Automation
 
 Brief Overview:
-This Python script automates swiping, tapping, and scrolling gestures to interact with a mobile app's menu. It validates the correct loading of specific items (image, name, price) using reusable OOP components.
+This Python script automates swiping, tapping, and scrolling gestures to interact with a mobile app's menu. It validates the correct loading of specific items (image, name, price) using reusable OOP components
+
+# Task 7: JSON Data Extraction and Display
+Brief Overview: This Python script reads data from a JSON file, extracts specific fields (id, name, email, age), and prints them in a formatted way. It handles missing fields by providing default values using the .get() method.
