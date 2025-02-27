@@ -1,0 +1,9 @@
+INFO: Appium session started.
+DEBUG: Initialized Appium driver.
+INFO: Launching the application.
+ERROR: Failed to connect to the device: Timeout.
+DEBUG: Waiting for element to appear.
+ERROR: Element not found: login button.
+INFO: Test case passed successfully.
+ERROR: Application crashed due to unexpected error.
+INFO: Session ended.
