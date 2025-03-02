@@ -1,4 +1,4 @@
-# Task1: UI Automation Script for Login
+# Task 1: UI Automation Script for Login
 This Robot Framework script automates the login process for https://the-internet.herokuapp.com/login using SeleniumLibrary.
 
 Brief Overview:
@@ -35,3 +35,7 @@ This Python script automates swiping, tapping, and scrolling gestures to interac
 
 # Task 7: JSON Data Extraction and Display
 Brief Overview: This Python script reads data from a JSON file, extracts specific fields (id, name, email, age), and prints them in a formatted way. It handles missing fields by providing default values using the .get() method.
+
+# Task 8: Mobile Automation for Login & Order Placement
+Brief Overview:
+This script automates a complete mobile shopping flow using Appium. It launches the app, logs in, adds a product to the cart, enters checkout details, places an order, and verifies success. It includes explicit waits and error handling for reliability.
