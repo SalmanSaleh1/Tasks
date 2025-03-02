@@ -1,4 +1,4 @@
-# Task1: UI Automation Script for Login
+# Task 1: UI Automation Script for Login
 This Robot Framework script automates the login process for https://the-internet.herokuapp.com/login using SeleniumLibrary.
 
 Brief Overview:
