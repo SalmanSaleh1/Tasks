@@ -85,8 +85,13 @@ try:
     to_payment_btn.click()
     print("✅ Proceeded to Payment.")
 
+    time.sleep(2)  # Wait for 2 seconds before interacting (not ideal, but can help)
+
     # Step 7: Enter payment details
-    WebDriverWait(driver, 10).until(EC.presence_of_element_located((AppiumBy.ACCESSIBILITY_ID, "Full Name* input field"))).send_keys("Bob Smith")
+    WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located(
+            (AppiumBy.XPATH, '//android.widget.EditText[@content-desc="Full Name* input field"]'))
+    ).send_keys("Bob Smith")
     WebDriverWait(driver, 10).until(EC.presence_of_element_located((AppiumBy.ACCESSIBILITY_ID, "Card Number* input field"))).send_keys("4111111111111111")
     WebDriverWait(driver, 10).until(EC.presence_of_element_located((AppiumBy.ACCESSIBILITY_ID, "Expiration Date* input field"))).send_keys("12/28")
     WebDriverWait(driver, 10).until(EC.presence_of_element_located((AppiumBy.ACCESSIBILITY_ID, "Security Code* input field"))).send_keys("123")
