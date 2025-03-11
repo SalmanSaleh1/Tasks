@@ -17,23 +17,32 @@ jobs:
       displayName: 'Install Python'
 
     - script: |
+        echo "Cleaning up the workspace..."
+        del /f /q $(Build.SourcesDirectory)\venv
+      displayName: 'Clean Up Workspace'
+
+    - script: |
         echo "Creating virtual environment..."
         python -m venv $(Build.SourcesDirectory)\venv
-        echo "Checking venv directory..."
-        dir
+        echo "Checking if virtual environment is created..."
+        if exist $(Build.SourcesDirectory)\venv (
+          echo "venv directory exists!"
+        ) else (
+          echo "venv directory does not exist!"
+        )
         dir $(Build.SourcesDirectory)\venv
       displayName: 'Debug: Check venv Directory'
 
     - script: |
         echo "Upgrading pip and installing dependencies..."
-        $(Build.SourcesDirectory)\venv\Scripts\python -m pip install --upgrade pip
-        $(Build.SourcesDirectory)\venv\Scripts\pip install -r requirements.txt
+        "$(Build.SourcesDirectory)\venv\Scripts\python" -m pip install --upgrade pip
+        "$(Build.SourcesDirectory)\venv\Scripts\pip" install -r requirements.txt
       displayName: 'Install Dependencies'
 
     - script: |
         choco install googlechrome -y
-        $(Build.SourcesDirectory)\venv\Scripts\pip install webdriver-manager
-        $(Build.SourcesDirectory)\venv\Scripts\python -m webdriver_manager.chrome
+        "$(Build.SourcesDirectory)\venv\Scripts\pip" install webdriver-manager
+        "$(Build.SourcesDirectory)\venv\Scripts\python" -m webdriver_manager.chrome
       displayName: 'Install Chrome & ChromeDriver'
 
     - script: |
@@ -47,7 +56,7 @@ jobs:
   steps:
     - script: |
         echo "Running Robot Framework tests..."
-        $(Build.SourcesDirectory)\venv\Scripts\python -m robot --console verbose --outputdir results test/
+        "$(Build.SourcesDirectory)\venv\Scripts\python" -m robot --console verbose --outputdir results test/
       displayName: 'Run Robot Framework Tests'
 
 - job: RunTestsParallel
@@ -56,6 +65,6 @@ jobs:
   steps:
     - script: |
         echo "Running tests in parallel..."
-        $(Build.SourcesDirectory)\venv\Scripts\pip install robotframework-pabot
-        $(Build.SourcesDirectory)\venv\Scripts\python -m pabot --processes 4 --outputdir results test/
+        "$(Build.SourcesDirectory)\venv\Scripts\pip" install robotframework-pabot
+        "$(Build.SourcesDirectory)\venv\Scripts\python" -m pabot --processes 4 --outputdir results test/
       displayName: 'Run Tests in Parallel'
