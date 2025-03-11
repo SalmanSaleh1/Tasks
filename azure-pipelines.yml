@@ -2,7 +2,7 @@ trigger:
   - master
 
 pool:
-  name: MyPool  
+  name: MyPool  # Replace with your agent pool name
 
 jobs:
   - job: InstallDependencies
@@ -18,7 +18,8 @@ jobs:
 
       - script: |
           python -m venv venv
-          call .\venv\Scripts\activate && pip install --upgrade pip
+          .\venv\Scripts\activate
+          pip install --upgrade pip
           pip install robotframework robotframework-seleniumlibrary robotframework-csvlibrary
         displayName: 'Install Robot Framework & Dependencies'
 
@@ -39,5 +40,7 @@ jobs:
         displayName: 'Debug: List Test Files'
 
       - script: |
-          call .\venv\Scripts\activate && python -m robot --console verbose test/
+          echo "Activating virtual environment and running tests..."
+          .\venv\Scripts\activate
+          python -m robot --console verbose test/
         displayName: 'Run All Robot Framework Test Cases'
