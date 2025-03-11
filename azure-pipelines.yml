@@ -18,14 +18,14 @@ jobs:
 
     - script: |
         python -m venv venv
-        .\venv\Scripts\python -m pip install --upgrade pip
-        .\venv\Scripts\pip install -r requirements.txt
+        venv\Scripts\python -m pip install --upgrade pip
+        venv\Scripts\pip install -r requirements.txt
       displayName: 'Install Dependencies'
 
     - script: |
         choco install googlechrome -y
-        .\venv\Scripts\pip install webdriver-manager
-        .\venv\Scripts\python -m webdriver_manager.chrome
+        venv\Scripts\pip install webdriver-manager
+        venv\Scripts\python -m webdriver_manager.chrome
       displayName: 'Install Chrome & ChromeDriver'
 
     - script: |
@@ -38,7 +38,10 @@ jobs:
   dependsOn: Setup
   steps:
     - script: |
-        .\venv\Scripts\python -m robot --console verbose --outputdir results test/
+        echo "Checking venv directory..."
+        dir venv
+        echo "Running Robot Framework tests..."
+        venv\Scripts\python -m robot --console verbose --outputdir results test/
       displayName: 'Run Robot Framework Tests'
 
 - job: RunTestsParallel
@@ -46,6 +49,7 @@ jobs:
   dependsOn: Setup
   steps:
     - script: |
-        .\venv\Scripts\pip install robotframework-pabot
-        .\venv\Scripts\python -m pabot --processes 4 --outputdir results test/
+        venv\Scripts\pip install robotframework-pabot
+        echo "Running tests in parallel..."
+        venv\Scripts\python -m pabot --processes 4 --outputdir results test/
       displayName: 'Run Tests in Parallel'
