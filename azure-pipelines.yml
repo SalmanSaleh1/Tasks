@@ -56,7 +56,7 @@ jobs:
   steps:
     - script: |
         echo "Running Robot Framework tests..."
-        "$(Build.SourcesDirectory)\venv\Scripts\python" -m robot --console verbose --outputdir results test/
+        "$(Build.SourcesDirectory)\venv\Scripts\python" -m robot --console verbose --outputdir results $(Build.SourcesDirectory)\test/
       displayName: 'Run Robot Framework Tests'
 
 - job: RunTestsParallel
@@ -66,5 +66,5 @@ jobs:
     - script: |
         echo "Running tests in parallel..."
         "$(Build.SourcesDirectory)\venv\Scripts\pip" install robotframework-pabot
-        "$(Build.SourcesDirectory)\venv\Scripts\python" -m pabot --processes 4 --outputdir results test/
+        "$(Build.SourcesDirectory)\venv\Scripts\python" -m pabot --processes 4 --outputdir results $(Build.SourcesDirectory)\test/
       displayName: 'Run Tests in Parallel'
