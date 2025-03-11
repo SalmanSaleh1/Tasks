@@ -18,21 +18,22 @@ jobs:
 
     - script: |
         echo "Creating virtual environment..."
-        python -m venv venv
+        python -m venv $(Build.SourcesDirectory)\venv
         echo "Checking venv directory..."
-        dir venv
-      displayName: 'Create Virtual Environment'
+        dir
+        dir $(Build.SourcesDirectory)\venv
+      displayName: 'Debug: Check venv Directory'
 
     - script: |
         echo "Upgrading pip and installing dependencies..."
-        venv\Scripts\python -m pip install --upgrade pip
-        venv\Scripts\pip install -r requirements.txt
+        $(Build.SourcesDirectory)\venv\Scripts\python -m pip install --upgrade pip
+        $(Build.SourcesDirectory)\venv\Scripts\pip install -r requirements.txt
       displayName: 'Install Dependencies'
 
     - script: |
         choco install googlechrome -y
-        venv\Scripts\pip install webdriver-manager
-        venv\Scripts\python -m webdriver_manager.chrome
+        $(Build.SourcesDirectory)\venv\Scripts\pip install webdriver-manager
+        $(Build.SourcesDirectory)\venv\Scripts\python -m webdriver_manager.chrome
       displayName: 'Install Chrome & ChromeDriver'
 
     - script: |
@@ -45,10 +46,8 @@ jobs:
   dependsOn: Setup
   steps:
     - script: |
-        echo "Checking venv directory before running tests..."
-        dir venv
         echo "Running Robot Framework tests..."
-        venv\Scripts\python -m robot --console verbose --outputdir results test/
+        $(Build.SourcesDirectory)\venv\Scripts\python -m robot --console verbose --outputdir results test/
       displayName: 'Run Robot Framework Tests'
 
 - job: RunTestsParallel
@@ -56,7 +55,7 @@ jobs:
   dependsOn: Setup
   steps:
     - script: |
-        venv\Scripts\pip install robotframework-pabot
         echo "Running tests in parallel..."
-        venv\Scripts\python -m pabot --processes 4 --outputdir results test/
+        $(Build.SourcesDirectory)\venv\Scripts\pip install robotframework-pabot
+        $(Build.SourcesDirectory)\venv\Scripts\python -m pabot --processes 4 --outputdir results test/
       displayName: 'Run Tests in Parallel'
