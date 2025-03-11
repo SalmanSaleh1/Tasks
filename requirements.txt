@@ -3,3 +3,4 @@ robotframework-seleniumlibrary
 robotframework-csvlibrary
 robotframework-pabot
 webdriver-manager
+robotframework-appiumlibrary
