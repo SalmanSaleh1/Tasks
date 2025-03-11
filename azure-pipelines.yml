@@ -17,12 +17,17 @@ jobs:
       displayName: 'Install Python'
 
     - script: |
+        echo "Creating virtual environment..."
         python -m venv venv
+        echo "Checking venv directory..."
+        dir venv
+      displayName: 'Create Virtual Environment'
+
+    - script: |
+        echo "Upgrading pip and installing dependencies..."
         venv\Scripts\python -m pip install --upgrade pip
         venv\Scripts\pip install -r requirements.txt
-        echo "Checking venv directory after creation..."
-        dir venv
-      displayName: 'Create and Verify Virtual Environment'
+      displayName: 'Install Dependencies'
 
     - script: |
         choco install googlechrome -y
@@ -30,28 +35,28 @@ jobs:
         venv\Scripts\python -m webdriver_manager.chrome
       displayName: 'Install Chrome & ChromeDriver'
 
-    - task: PublishBuildArtifacts@1
-      inputs:
-        pathToPublish: 'venv'
-        artifactName: 'venv'
-      displayName: 'Save venv for later jobs'
+    - script: |
+        echo "Checking test directory and files..."
+        dir test
+      displayName: 'Debug: List Test Files'
 
 - job: RunTests
   displayName: 'Execute Robot Framework Tests'
   dependsOn: Setup
   steps:
-    - task: DownloadBuildArtifacts@0
-      inputs:
-        artifactName: 'venv'
-        downloadPath: '.'
-      displayName: 'Restore venv'
-
     - script: |
         echo "Checking venv directory before running tests..."
         dir venv
-      displayName: 'Debug: Check venv Directory Before Running Tests'
-
-    - script: |
         echo "Running Robot Framework tests..."
         venv\Scripts\python -m robot --console verbose --outputdir results test/
       displayName: 'Run Robot Framework Tests'
+
+- job: RunTestsParallel
+  displayName: 'Execute Tests in Parallel'
+  dependsOn: Setup
+  steps:
+    - script: |
+        venv\Scripts\pip install robotframework-pabot
+        echo "Running tests in parallel..."
+        venv\Scripts\python -m pabot --processes 4 --outputdir results test/
+      displayName: 'Run Tests in Parallel'
