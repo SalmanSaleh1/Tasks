@@ -1,35 +1,51 @@
 trigger:
   - master
- 
+
 pool:
   name: MyPool  
- 
-steps:
-  - checkout: self
-    displayName: 'Checkout Code'
- 
-  - script: |
-      echo "Installing Python 3.9"
-      choco install python --version 3.9 -y
-    displayName: 'Install Python'
- 
-  - script: |
-      python -m venv venv
-      call .\venv\Scripts\activate && pip install --upgrade pip
-      pip install robotframework
-      pip install robotframework-seleniumlibrary
-      pip install robotframework-csvlibrary  
-    displayName: 'Install Robot Framework & Dependencies'
- 
-  - script: |
-      choco install googlechrome chromedriver -y
-    displayName: 'Install Chrome & ChromeDriver'
- 
-  - script: |
-      echo "Checking test directory and files..."
-      dir test
-    displayName: 'Debug: List Test Files'
- 
-  - script: |
-      call .\venv\Scripts\activate && python -m robot --console verbose test/
-    displayName: 'Run All Robot Framework Test Cases'
+
+jobs:
+- job: Setup
+  displayName: 'Setup Environment'
+  steps:
+    - checkout: self
+      displayName: 'Checkout Code'
+
+    - script: |
+        echo "Installing Python 3.9"
+        choco install python --version=3.9 -y
+      displayName: 'Install Python'
+
+    - script: |
+        python -m venv venv
+        .\venv\Scripts\python -m pip install --upgrade pip
+        .\venv\Scripts\pip install -r requirements.txt
+      displayName: 'Install Dependencies'
+
+    - script: |
+        choco install googlechrome -y
+        .\venv\Scripts\pip install webdriver-manager
+        .\venv\Scripts\python -m webdriver_manager.chrome
+      displayName: 'Install Chrome & ChromeDriver'
+
+    - script: |
+        echo "Checking test directory and files..."
+        dir test
+      displayName: 'Debug: List Test Files'
+
+- job: RunTests
+  displayName: 'Execute Robot Framework Tests'
+  dependsOn: Setup
+  steps:
+    - script: |
+        .\venv\Scripts\python -m robot --console verbose --outputdir results test/
+      displayName: 'Run Robot Framework Tests'
+
+- job: RunTestsParallel
+  displayName: 'Execute Tests in Parallel'
+  dependsOn: Setup
+  steps:
+    - script: |
+        .\venv\Scripts\pip install robotframework-pabot
+        .\venv\Scripts\python -m pabot --processes 4 --outputdir results test/
+      displayName: 'Run Tests in Parallel'
