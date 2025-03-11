@@ -47,7 +47,7 @@ jobs:
 
     - script: |
         echo "Checking test directory and files..."
-        dir test
+        dir $(Build.SourcesDirectory)\test
       displayName: 'Debug: List Test Files'
 
 - job: RunTests
