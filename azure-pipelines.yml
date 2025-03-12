@@ -15,7 +15,7 @@ steps:
       python -m venv venv
       call .\venv\Scripts\activate
       pip install --upgrade pip
-      pip install robotframework robotframework-seleniumlibrary robotframework-csvlibrary robotframework-parallel
+      pip install robotframework pytest pytest-xdist robotframework-pytest
     displayName: 'Install Dependencies & Set Up Virtual Environment'
 
   # Install Google Chrome and ChromeDriver
@@ -29,9 +29,9 @@ steps:
       dir test
     displayName: 'Debug: List Test Files'
 
-  # Run Robot Framework tests in parallel using robotframework-parallel
+  # Run Robot Framework tests in parallel using pytest-xdist
   - script: |
-      echo "Running tests in parallel"
+      echo "Running tests in parallel with pytest-xdist"
       call .\venv\Scripts\activate
-      robot --console verbose --parallel 4 test/
-    displayName: 'Run Robot Framework Tests in Parallel'
+      pytest --maxfail=5 --disable-warnings --tb=short -n 4 test/
+    displayName: 'Run Robot Framework Tests in Parallel with pytest-xdist'
