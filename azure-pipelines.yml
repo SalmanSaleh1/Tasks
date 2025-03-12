@@ -27,21 +27,20 @@ jobs:
     displayName: 'Run Robot Framework Tests in Parallel'
     dependsOn: InstallDependencies
     strategy:
-      parallel: 2  # Example: Running two parallel tests
-    matrix:
-      device1:
-        browser: 'chrome'
-        device: 'Device1'
-      device2:
-        browser: 'chrome'
-        device: 'Device2'
+      matrix:
+        device1:
+          browser: 'chrome'
+          device: 'Device1'
+        device2:
+          browser: 'chrome'
+          device: 'Device2'
 
     steps:
       - script: |
           echo "Running tests on ${browser} with ${device}"
           call .\venv\Scripts\activate && python -m robot --console verbose --variable BROWSER:${browser} --variable DEVICE:${device} test/
         displayName: 'Run Test on ${browser} (${device})'
-
+        
       - script: |
           echo "Checking test directory and files..."
           dir test
