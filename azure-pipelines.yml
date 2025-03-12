@@ -2,70 +2,44 @@ trigger:
   - master
 
 pool:
-  name: MyPool
+  name: MyPool  
 
-steps:
-  # Step 1: Checkout code
-  - checkout: self
-    displayName: 'Checkout Code'
+jobs:
+  - job: InstallDependencies
+    displayName: 'Install Dependencies'
+    steps:
+      - checkout: self
+        displayName: 'Checkout Code'
+        
+      - script: |
+          echo "Installing Python 3.9"
+          choco install python --version 3.9 -y
+        displayName: 'Install Python'
 
-  # Step 2: Install Python 3.9 using Chocolatey
-  - script: |
-      echo "Installing Python 3.9..."
-      choco install python --version 3.9.13 -y --no-progress
-      echo "Python installation complete."
-    displayName: 'Install Python 3.9'
-    continueOnError: false
+      - script: |
+          python -m venv venv
+          call .\venv\Scripts\activate && pip install --upgrade pip
+          pip install robotframework
+          pip install robotframework-seleniumlibrary
+          pip install robotframework-csvlibrary  
+        displayName: 'Install Robot Framework & Dependencies'
 
-  # Step 3: Set up Python virtual environment and install dependencies
-  - script: |
-      echo "Setting up Python virtual environment..."
-      python -m venv venv
-      call .\venv\Scripts\activate
+      - script: |
+          choco install googlechrome chromedriver -y
+        displayName: 'Install Chrome & ChromeDriver'
 
-      echo "Upgrading pip..."
-      python -m pip install --upgrade pip
+  - job: RunTests
+    displayName: 'Run Robot Framework Tests'
+    dependsOn: []
+    steps:
+      - checkout: self
+        displayName: 'Checkout Code'
 
-      echo "Installing Robot Framework and dependencies..."
-      pip install robotframework
-      pip install robotframework-seleniumlibrary
-      pip install robotframework-csvlibrary
-      pip install robotframework-pabot  # Install robotframework-pabot
+      - script: |
+          echo "Checking test directory and files..."
+          dir test
+        displayName: 'Debug: List Test Files'
 
-      echo "Installed packages:"
-      pip list
-    displayName: 'Set Up Virtual Environment and Install Dependencies'
-    continueOnError: false
-
-  # Step 4: Install Chrome and ChromeDriver using Chocolatey
-  - script: |
-      echo "Installing Google Chrome and ChromeDriver..."
-      choco install googlechrome chromedriver -y --no-progress
-      echo "Chrome and ChromeDriver installation complete."
-    displayName: 'Install Chrome & ChromeDriver'
-    continueOnError: false
-
-  # Step 5: Debug - List test files
-  - script: |
-      echo "Checking test directory and files..."
-      dir test
-    displayName: 'Debug: List Test Files'
-
-  # Step 6: Run Robot Framework tests in parallel using robotframework-pabot
-  - script: |
-      echo "Running Robot Framework tests in parallel..."
-
-      # Activate the virtual environment
-      call .\venv\Scripts\activate
-
-      # Verify that robotframework-pabot is installed
-      echo "Checking if robotframework-pabot is installed..."
-      pip show robotframework-pabot || echo "robotframework-pabot is not installed."
-
-      # Run the tests using robotframework-pabot
-      echo "Executing tests in parallel..."
-      python -m robotframework_pabot --processes 4 --outputdir result test/
-
-      echo "Test execution complete."
-    displayName: 'Run Robot Framework Tests in Parallel'
-    continueOnError: false
+      - script: |
+          call .\venv\Scripts\activate && python -m robot --console verbose test/
+        displayName: 'Run All Robot Framework Test Cases'
