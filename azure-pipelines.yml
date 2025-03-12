@@ -35,5 +35,5 @@ steps:
  
   - script: |
       echo "Running tests with parallel execution"
-      call .\venv\Scripts\activate && robot --console verbose --argumentfile tests/robot_settings.txt --parallel 4 tests/
+      call .\venv\Scripts\activate && robot --console verbose --parallel 4 tests/
     displayName: 'Run All Robot Framework Test Cases (Parallel)'
