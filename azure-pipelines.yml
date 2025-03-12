@@ -37,9 +37,9 @@ jobs:
 
     steps:
       - script: |
-          echo "Running tests on ${browser} with ${device}"
-          call .\venv\Scripts\activate && python -m robot --console verbose --variable BROWSER:${browser} --variable DEVICE:${device} test/
-        displayName: 'Run Test on ${browser} (${device})'
+          echo "Running tests on $(browser) with $(device)"
+          call .\venv\Scripts\activate && python -m robot --console verbose --variable BROWSER:$(browser) --variable DEVICE:$(device) test/
+        displayName: 'Run Test on $(browser) ($(device))'
         
       - script: |
           echo "Checking test directory and files..."
