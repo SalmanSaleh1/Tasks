@@ -9,15 +9,14 @@ steps:
   - checkout: self
     displayName: 'Checkout Code'
 
-  # Install Python 3.9, dependencies, and setup virtual environment
+  # Install dependencies and set up virtual environment (skip Python installation)
   - script: |
-      echo "Installing Python 3.9 and dependencies"
-      choco install python --version 3.9 -y
+      echo "Setting up virtual environment and installing dependencies"
       python -m venv venv
       call .\venv\Scripts\activate
       pip install --upgrade pip
       pip install robotframework robotframework-seleniumlibrary robotframework-csvlibrary robotframework-parallel
-    displayName: 'Install Python & Dependencies'
+    displayName: 'Install Dependencies & Set Up Virtual Environment'
 
   # Install Google Chrome and ChromeDriver
   - script: |
