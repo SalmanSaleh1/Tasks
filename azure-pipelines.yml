@@ -56,7 +56,10 @@ jobs:
       - script: |
           echo "Verifying pabot installation..."
           call venv\Scripts\activate.bat
-          python -m pip freeze | findstr pabot
+          echo "Checking Python Environment and Installed Packages..."
+          python --version
+          python -m pip freeze
+          python -m pip show pabot || echo "pabot is NOT installed!"
         displayName: "Check Pabot Installation"
 
       - script: |
