@@ -8,7 +8,7 @@ jobs:
   - job: RunRobotTests
     displayName: 'Run Robot Framework Tests'
     strategy:
-      parallel: 2  # Adjust the number based on available agents
+      parallel: 2  # Adjust based on available agents
     steps:
       - task: UsePythonVersion@0
         inputs:
@@ -31,13 +31,18 @@ jobs:
       - script: |
           echo "Running Robot Framework tests in parallel..."
           .\venv\Scripts\activate
-          pabot --processes 2 --outputdir Results test/
+          pabot --processes 2 --outputdir $(Build.ArtifactStagingDirectory)\Results test/
         displayName: 'Run Robot Framework Tests in Parallel'
+
+      - script: |
+          echo "Creating Results directory..."
+          mkdir $(Build.ArtifactStagingDirectory)\Results
+        displayName: 'Create Results Directory'
 
       - task: PublishBuildArtifacts@1
         displayName: 'Publish Test Results'
         inputs:
-          PathtoPublish: 'Results'
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)\Results'
           ArtifactName: 'RobotFrameworkReports'
           publishLocation: 'Container'
         condition: succeededOrFailed()
