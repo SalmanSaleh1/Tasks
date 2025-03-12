@@ -5,8 +5,8 @@ pool:
   name: MyPool
 
 jobs:
-  - job: Job1
-    displayName: 'Install Dependencies'
+  - job: RunTestsOnDevice1
+    displayName: 'Run Tests on Device 1'
     steps:
       - checkout: self
         displayName: 'Checkout Code'
@@ -23,15 +23,30 @@ jobs:
           pip install robotframework robotframework-seleniumlibrary robotframework-csvlibrary
         displayName: 'Install Robot Framework & Dependencies'
 
-  - job: Job2
-    displayName: 'Run Tests'
-    steps:
       - script: |
-          echo "Running tests"
-          call .\venv\Scripts\activate && python -m robot --console verbose test/
-        displayName: 'Run Robot Framework Test Cases'
+          echo "Running tests on Device 1"
+          call .\venv\Scripts\activate && python -m robot --console verbose --variable DEVICE:Device1 test/
+        displayName: 'Run Robot Framework Test Cases on Device 1'
+
+  - job: RunTestsOnDevice2
+    displayName: 'Run Tests on Device 2'
+    steps:
+      - checkout: self
+        displayName: 'Checkout Code'
 
       - script: |
-          echo "Checking test directory and files..."
-          dir test
-        displayName: 'Debug: List Test Files'
+          echo "Installing Python 3.9 and necessary tools"
+          choco install python --version 3.9 -y
+          choco install googlechrome chromedriver -y
+        displayName: 'Install Python & Chrome'
+
+      - script: |
+          python -m venv venv
+          call .\venv\Scripts\activate && pip install --upgrade pip
+          pip install robotframework robotframework-seleniumlibrary robotframework-csvlibrary
+        displayName: 'Install Robot Framework & Dependencies'
+
+      - script: |
+          echo "Running tests on Device 2"
+          call .\venv\Scripts\activate && python -m robot --console verbose --variable DEVICE:Device2 test/
+        displayName: 'Run Robot Framework Test Cases on Device 2'
