@@ -24,6 +24,7 @@ steps:
       pip install pabot  # Install Pabot for parallel execution
     displayName: 'Install Robot Framework & Dependencies'
 
+
   # Install Chrome and ChromeDriver
   - script: |
       choco install googlechrome chromedriver -y
