@@ -54,8 +54,18 @@ steps:
   # Step 6: Run Robot Framework tests in parallel using robotframework-pabot
   - script: |
       echo "Running Robot Framework tests in parallel..."
+
+      # Activate the virtual environment
       call .\venv\Scripts\activate
+
+      # Verify that robotframework-pabot is installed
+      echo "Checking if robotframework-pabot is installed..."
+      pip show robotframework-pabot || pip install robotframework-pabot
+
+      # Run the tests using robotframework-pabot
+      echo "Executing tests in parallel..."
       python -m robotframework_pabot --processes 4 --outputdir result test/
+
       echo "Test execution complete."
     displayName: 'Run Robot Framework Tests in Parallel'
     continueOnError: false
