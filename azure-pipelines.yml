@@ -1,31 +1,33 @@
 trigger:
-  - master
+  - master  # Adjust the branch name as needed
 
 pool:
-  name: MyPool
+  name: 'MyPool'  # Replace with your agent pool name
 
-steps:
-  - checkout: self
-    displayName: 'Checkout Code'
+jobs:
+  - job: InstallAndTest
+    displayName: 'Install Dependencies and Run Tests'
+    strategy:
+      parallel: 4  # Adjust based on the number of agents available
+    steps:
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '3.9'  # Specify the desired Python version
+          addToPath: true
 
-  - script: |
-      echo "Installing Python 3.9"
-      choco install python --version 3.9 -y
-    displayName: 'Install Python'
+      - script: |
+          echo "Setting up virtual environment and installing dependencies"
+          python -m venv venv
+          call .\venv\Scripts\activate
+          pip install pip
+          pip install robotframework
+          pip install robotframework-seleniumlibrary
+          pip install robotframework-csvlibrary
+          pip install robotframework-pabot  # Pabot enables parallel test execution
+        displayName: 'Install Dependencies & Set Up Virtual Environment'
 
-  - script: |
-      echo "Setting up virtual environment and installing dependencies"
-      python -m venv venv
-      call .\venv\Scripts\activate
-      pip install --upgrade pip
-      pip install robotframework
-      pip install robotframework-seleniumlibrary
-      pip install robotframework-csvlibrary
-      pip install pabot
-    displayName: 'Install Dependencies & Set Up Virtual Environment'
-
-  - script: |
-      echo "Running tests in parallel with Pabot"
-      call .\venv\Scripts\activate
-      pabot --processes 4 test/
-    displayName: 'Run Robot Framework Tests in Parallel'
+      - script: |
+          echo "Running Robot Framework Tests in Parallel"
+          call .\venv\Scripts\activate
+          pabot --processes 4 --outputdir Results test/  # Adjust 'test/' to your test directory
+        displayName: 'Run Robot Framework Tests in Parallel'
