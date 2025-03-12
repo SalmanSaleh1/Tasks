@@ -55,7 +55,7 @@ steps:
   - script: |
       echo "Running Robot Framework tests in parallel..."
       call .\venv\Scripts\activate
-      .\venv\Scripts\robotframework-pabot --processes 4 --outputdir result test/
+      python -m robotframework_pabot --processes 4 --outputdir result test/
       echo "Test execution complete."
     displayName: 'Run Robot Framework Tests in Parallel'
     continueOnError: false
