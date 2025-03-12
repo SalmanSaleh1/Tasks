@@ -21,7 +21,6 @@ steps:
       pip install robotframework-seleniumlibrary
       pip install robotframework-csvlibrary
       pip install pytest pytest-xdist
-      pip install robotframework-parallel
     displayName: 'Install Robot Framework & Dependencies'
  
   - script: |
@@ -35,6 +34,6 @@ steps:
     displayName: 'Debug: List Test Files'
  
   - script: |
-      echo "Running tests with parallel execution"
-      call .\venv\Scripts\activate && robot --console verbose --parallel 4 tests/
-    displayName: 'Run All Robot Framework Test Cases (Parallel)'
+      echo "Running tests with pytest and parallel execution"
+      call .\venv\Scripts\activate && pytest --maxfail=5 --disable-warnings -q --numprocesses=4 tests/
+    displayName: 'Run All Robot Framework Test Cases (Parallel with pytest-xdist)'
