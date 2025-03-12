@@ -1,47 +1,35 @@
 trigger:
   - master
-
+ 
 pool:
-  name: MyPool
-
-jobs:
-  - job: InstallDependencies
-    displayName: 'Install Dependencies'
-    steps:
-      - checkout: self
-        displayName: 'Checkout Code'
-
-      - script: |
-          echo "Installing Python 3.9 and necessary tools"
-          choco install python --version 3.9 -y
-          choco install googlechrome chromedriver -y
-        displayName: 'Install Python & Chrome'
-
-      - script: |
-          python -m venv venv
-          call .\venv\Scripts\activate && pip install --upgrade pip
-          pip install robotframework robotframework-seleniumlibrary robotframework-csvlibrary
-        displayName: 'Install Robot Framework & Dependencies'
-
-  - job: RunTests
-    displayName: 'Run Robot Framework Tests in Parallel'
-    dependsOn: InstallDependencies
-    strategy:
-      matrix:
-        device1:
-          browser: 'chrome'
-          device: 'Device1'
-        device2:
-          browser: 'chrome'
-          device: 'Device2'
-
-    steps:
-      - script: |
-          echo "Running tests on $(browser) with $(device)"
-          call .\venv\Scripts\activate && python -m robot --console verbose --variable BROWSER:$(browser) --variable DEVICE:$(device) test/
-        displayName: 'Run Test on $(browser) ($(device))'
-        
-      - script: |
-          echo "Checking test directory and files..."
-          dir test
-        displayName: 'Debug: List Test Files'
+  name: MyPool  
+ 
+steps:
+  - checkout: self
+    displayName: 'Checkout Code'
+ 
+  - script: |
+      echo "Installing Python 3.9"
+      choco install python --version 3.9 -y
+    displayName: 'Install Python'
+ 
+  - script: |
+      python -m venv venv
+      call .\venv\Scripts\activate && pip install --upgrade pip
+      pip install robotframework
+      pip install robotframework-seleniumlibrary
+      pip install robotframework-csvlibrary  
+    displayName: 'Install Robot Framework & Dependencies'
+ 
+  - script: |
+      choco install googlechrome chromedriver -y
+    displayName: 'Install Chrome & ChromeDriver'
+ 
+  - script: |
+      echo "Checking test directory and files..."
+      dir test
+    displayName: 'Debug: List Test Files'
+ 
+  - script: |
+      call .\venv\Scripts\activate && python -m robot --console verbose test/
+    displayName: 'Run All Robot Framework Test Cases'
