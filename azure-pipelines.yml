@@ -2,46 +2,42 @@ trigger:
   - master
 
 pool:
-  name: MyPool  # Replace with your agent pool name
+  name: MyPool  
 
 jobs:
-  - job: RunTestsParallel
-    displayName: 'Run Tests on Two Devices in Parallel'
+  - job: Setup
+    displayName: "Setup Environment"
     steps:
       - checkout: self
-        displayName: 'Checkout Code'
+        displayName: "Checkout Code"
 
       - script: |
-          echo "Installing Python 3.9"
+          echo "Installing Python 3.9..."
           choco install python --version 3.9 -y
-        displayName: 'Install Python'
+        displayName: "Install Python"
 
       - script: |
+          echo "Installing Dependencies..."
           python -m venv venv
-          call venv\Scripts\activate
-          pip install --upgrade pip
-          pip install robotframework robotframework-appiumlibrary
-        displayName: 'Install Robot Framework & Appium Library'
+          .\venv\Scripts\activate && pip install --upgrade pip
+          pip install robotframework robotframework-seleniumlibrary robotframework-csvlibrary pabot
+        displayName: "Install Robot Framework & Dependencies"
 
       - script: |
+          echo "Installing Chrome & ChromeDriver..."
           choco install googlechrome chromedriver -y
-        displayName: 'Install Chrome & ChromeDriver'
+        displayName: "Install Chrome & ChromeDriver"
+
+  - job: RunTests
+    displayName: "Run Robot Framework Tests"
+    dependsOn: Setup
+    steps:
+      - script: |
+          echo "Running Tests in Parallel..."
+          .\venv\Scripts\activate && pabot --processes 4 --outputdir results test/
+        displayName: "Run Tests with Pabot (Parallel Execution)"
 
       - script: |
-          echo "Starting tests on Device 1..."
-          start /MIN cmd /c "call venv\Scripts\activate && python -m robot --variable DEVICE_NAME:Device1 test\ > device1_log.txt 2>&1"
-
-          echo "Starting tests on Device 2..."
-          start /MIN cmd /c "call venv\Scripts\activate && python -m robot --variable DEVICE_NAME:Device2 test\ > device2_log.txt 2>&1"
-
-          echo "Waiting for tests to finish..."
-          timeout /T 60
-        displayName: 'Run Tests on Both Devices in Parallel'
-
-      - script: |
-          echo "Device 1 Logs:"
-          type device1_log.txt
-
-          echo "Device 2 Logs:"
-          type device2_log.txt
-        displayName: 'Show Test Execution Logs'
+          echo "Listing Test Results..."
+          dir results
+        displayName: "Debug: List Test Results"
