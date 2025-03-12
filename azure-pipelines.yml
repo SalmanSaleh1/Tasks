@@ -9,14 +9,14 @@ steps:
   - checkout: self
     displayName: 'Checkout Code'
 
-  # Install Python 3.9, dependencies and setup virtual environment
+  # Install Python 3.9, dependencies, and setup virtual environment
   - script: |
       echo "Installing Python 3.9 and dependencies"
       choco install python --version 3.9 -y
       python -m venv venv
       call .\venv\Scripts\activate
       pip install --upgrade pip
-      pip install robotframework robotframework-seleniumlibrary robotframework-csvlibrary
+      pip install robotframework robotframework-seleniumlibrary robotframework-csvlibrary robotframework-parallel
     displayName: 'Install Python & Dependencies'
 
   # Install Google Chrome and ChromeDriver
@@ -30,7 +30,7 @@ steps:
       dir test
     displayName: 'Debug: List Test Files'
 
-  # Run Robot Framework tests in parallel
+  # Run Robot Framework tests in parallel using robotframework-parallel
   - script: |
       echo "Running tests in parallel"
       call .\venv\Scripts\activate
