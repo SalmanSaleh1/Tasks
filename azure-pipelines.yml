@@ -28,20 +28,12 @@ jobs:
         displayName: 'Install Chrome & ChromeDriver'
 
       - script: |
-          echo "Running tests on Device 1..."
-          start /B .\venv\Scripts\python -m robot --variable DEVICE_NAME:Device1 test/ > device1_log.txt 2>&1
-          
-          echo "Running tests on Device 2..."
-          start /B .\venv\Scripts\python -m robot --variable DEVICE_NAME:Device2 test/ > device2_log.txt 2>&1
-          
-          echo "Waiting for parallel test executions..."
-          timeout /T 5
-        displayName: 'Run Tests on Both Devices in Parallel'
+          echo "Starting tests on Device 1..."
+          start cmd /c ".\venv\Scripts\python -m robot --variable DEVICE_NAME:Device1 test/"
 
-      - script: |
-          echo "Device 1 Logs:"
-          type device1_log.txt
-          
-          echo "Device 2 Logs:"
-          type device2_log.txt
-        displayName: 'Show Test Execution Logs'
+          echo "Starting tests on Device 2..."
+          start cmd /c ".\venv\Scripts\python -m robot --variable DEVICE_NAME:Device2 test/"
+
+          echo "Waiting for tests to complete..."
+          timeout /T 30
+        displayName: 'Run Tests on Both Devices in Parallel'
