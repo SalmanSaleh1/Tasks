@@ -17,7 +17,7 @@ steps:
   # Install dependencies, including Robot Framework, SeleniumLibrary, and CSVLibrary
   - script: |
       python -m venv venv
-      call .\venv\Scripts\activate && pip install --upgrade pip
+      call .\venv\Scripts\activate
       pip install robotframework
       pip install robotframework-seleniumlibrary
       pip install robotframework-csvlibrary
