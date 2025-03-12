@@ -30,7 +30,8 @@ jobs:
           echo "Activating Virtual Environment and Installing Dependencies..."
           call venv\Scripts\activate.bat
           python -m pip install --upgrade pip
-          pip install robotframework robotframework-seleniumlibrary robotframework-csvlibrary robotframework-pabot
+          pip install robotframework robotframework-seleniumlibrary robotframework-csvlibrary
+          pip install robotframework-pabot
         displayName: "Install Robot Framework and Dependencies"
 
       - script: |
@@ -55,8 +56,8 @@ jobs:
       - script: |
           echo "Verifying pabot installation..."
           call venv\Scripts\activate.bat
-          python -m pip show pabot || echo "pabot is not installed!"
-        displayName: "Verify Pabot Installation"
+          python -m pip freeze | findstr pabot
+        displayName: "Check Pabot Installation"
 
       - script: |
           echo "Running Tests in Parallel with Pabot..."
