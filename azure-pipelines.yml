@@ -16,7 +16,7 @@ steps:
   - script: |
       echo "Setting up Virtual Environment"
       python -m venv venv
-      call .\venv\Scripts\activate && pip install --upgrade pip
+      call .\venv\Scripts\activate && pip install --upgrade pip==22.0.4
       pip install robotframework
       pip install robotframework-seleniumlibrary
       pip install robotframework-csvlibrary
