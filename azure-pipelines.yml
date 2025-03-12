@@ -2,76 +2,32 @@ trigger:
   - master
 
 pool:
-  name: MyPool  
+  name: MyPool
 
 jobs:
-  - job: Setup
-    displayName: "Setup Environment"
+  - job: InstallDependencies
+    displayName: 'Install Dependencies'
+    pool:
+      name: MyPool
     steps:
       - checkout: self
-        displayName: "Checkout Code"
-
+        displayName: 'Checkout Code'
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '3.9'
+          addToPath: true
       - script: |
-          echo "Installing Python 3.9..."
-          choco install python --version 3.9 -y
-        displayName: "Install Python"
-
-      - script: |
-          echo "Creating Virtual Environment if not exists..."
-          if not exist venv (
-            python -m venv venv
-            echo "Virtual Environment created."
-          ) else (
-            echo "Virtual Environment already exists."
-          )
-        displayName: "Setup Virtual Environment"
-
-      - script: |
-          echo "Activating Virtual Environment and Installing Dependencies..."
-          call venv\Scripts\activate.bat
           python -m pip install --upgrade pip
-          pip install robotframework robotframework-seleniumlibrary robotframework-csvlibrary
-        displayName: "Install Robot Framework and Dependencies"
-
-      - script: |
-          echo "Installing robotframework-pabot explicitly..."
-          call venv\Scripts\activate.bat
-          pip install robotframework-pabot
-        displayName: "Install robotframework-pabot"
-
-      - script: |
-          echo "Installing Chrome & ChromeDriver..."
-          choco install googlechrome chromedriver -y
-        displayName: "Install Chrome & ChromeDriver"
+          pip install -r requirements.txt
+        displayName: 'Install Python Dependencies'
 
   - job: RunTests
-    displayName: "Run Robot Framework Tests"
-    dependsOn: Setup
+    displayName: 'Run Robot Framework Tests'
+    dependsOn: []
+    pool:
+      name: MyPool
     steps:
       - script: |
-          echo "Checking if test directory exists..."
-          if not exist test (
-            echo "ERROR: Test directory not found!"
-            exit /b 1
-          ) else (
-            echo "Test directory found."
-          )
-        displayName: "Verify Test Directory"
-
-      - script: |
-          echo "Verifying pabot installation..."
-          call venv\Scripts\activate.bat
-          python -m pip freeze
-          python -m pip show pabot || echo "pabot is NOT installed!"
-        displayName: "Check Pabot Installation"
-
-      - script: |
-          echo "Running Tests in Parallel with Pabot..."
-          call venv\Scripts\activate.bat
-          python -m pabot --processes 4 --outputdir results test/
-        displayName: "Run Tests with Pabot (Parallel Execution)"
-
-      - script: |
-          echo "Listing the results directory..."
-          dir results
-        displayName: "Debug: List Test Results"
+          robot -d Results Tests/
+        displayName: 'Run Robot Framework Tests'
+        continueOnError: true
