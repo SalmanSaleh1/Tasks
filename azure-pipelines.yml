@@ -20,27 +20,35 @@ jobs:
           python -m venv venv
           .\venv\Scripts\activate
           pip install --upgrade pip
-          pip install robotframework robotframework-seleniumlibrary robotframework-csvlibrary
-        displayName: 'Install Robot Framework & Dependencies'
+          pip install robotframework robotframework-appiumlibrary
+        displayName: 'Install Robot Framework & Appium Library'
 
       - script: |
           choco install googlechrome chromedriver -y
         displayName: 'Install Chrome & ChromeDriver'
 
-  - job: RunTests
-    displayName: 'Run Robot Framework Tests'
+  - job: RunTests_Device1
+    displayName: 'Run Tests on Device 1'
     dependsOn: InstallDependencies
     steps:
       - checkout: self
         displayName: 'Checkout Code'
 
       - script: |
-          echo "Checking test directory and files..."
-          dir test
-        displayName: 'Debug: List Test Files'
+          echo "Running tests on Device 1..."
+          .\venv\Scripts\activate
+          python -m robot --variable DEVICE_NAME:Device1 test/
+        displayName: 'Run Tests on Device 1'
+
+  - job: RunTests_Device2
+    displayName: 'Run Tests on Device 2'
+    dependsOn: InstallDependencies
+    steps:
+      - checkout: self
+        displayName: 'Checkout Code'
 
       - script: |
-          echo "Activating virtual environment and running tests..."
+          echo "Running tests on Device 2..."
           .\venv\Scripts\activate
-          python -m robot --console verbose test/
-        displayName: 'Run All Robot Framework Test Cases'
+          python -m robot --variable DEVICE_NAME:Device2 test/
+        displayName: 'Run Tests on Device 2'
