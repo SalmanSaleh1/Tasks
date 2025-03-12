@@ -1,39 +1,41 @@
 trigger:
   - master
- 
+
 pool:
   name: MyPool
- 
+
 steps:
   - checkout: self
     displayName: 'Checkout Code'
- 
+
+  # Install Python
   - script: |
       echo "Installing Python 3.9"
       choco install python --version 3.9 -y
     displayName: 'Install Python'
- 
+
+  # Install dependencies, including Robot Framework, SeleniumLibrary, and CSVLibrary
   - script: |
-      echo "Setting up Virtual Environment"
       python -m venv venv
-      call .\venv\Scripts\activate && pip install --upgrade pip==22.0.4
+      call .\venv\Scripts\activate && pip install --upgrade pip
       pip install robotframework
       pip install robotframework-seleniumlibrary
       pip install robotframework-csvlibrary
-      pip install pytest pytest-xdist
+      pip install pabot  # Install Pabot for parallel execution
     displayName: 'Install Robot Framework & Dependencies'
- 
+
+  # Install Chrome and ChromeDriver
   - script: |
-      echo "Installing Google Chrome and ChromeDriver"
       choco install googlechrome chromedriver -y
     displayName: 'Install Chrome & ChromeDriver'
- 
+
+  # Debug: List test files
   - script: |
       echo "Checking test directory and files..."
       dir test
     displayName: 'Debug: List Test Files'
- 
+
+  # Run Robot Framework tests in parallel using Pabot
   - script: |
-      echo "Running tests with pytest and parallel execution"
-      call .\venv\Scripts\activate && pytest --maxfail=5 --disable-warnings -q --numprocesses=4 tests/
-    displayName: 'Run All Robot Framework Test Cases (Parallel with pytest-xdist)'
+      call .\venv\Scripts\activate && pabot --processes 4 --outputdir result test/
+    displayName: 'Run All Robot Framework Test Cases in Parallel'
