@@ -21,12 +21,11 @@ steps:
       pip install robotframework
       pip install robotframework-seleniumlibrary
       pip install robotframework-csvlibrary
-      pip install pytest
-      pip install pytest-xdist
+      pip install pabot
     displayName: 'Install Dependencies & Set Up Virtual Environment'
 
   - script: |
-      echo "Running tests in parallel"
+      echo "Running tests in parallel with Pabot"
       call .\venv\Scripts\activate
-      pytest -n auto test/
+      pabot --processes 4 test/
     displayName: 'Run Robot Framework Tests in Parallel'
