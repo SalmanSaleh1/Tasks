@@ -17,10 +17,12 @@ jobs:
         displayName: "Install Python"
 
       - script: |
-          echo "Setting up Virtual Environment..."
-          python -m venv venv
+          if not exist venv (
+            echo "Virtual Environment not found. Creating..."
+            python -m venv venv
+          )
           echo "Installing Dependencies..."
-          .\venv\Scripts\activate && python -m pip install --no-cache-dir robotframework robotframework-seleniumlibrary robotframework-csvlibrary pabot
+          python -m pip install --no-cache-dir robotframework robotframework-seleniumlibrary robotframework-csvlibrary pabot
         displayName: "Setup Virtual Environment & Install Dependencies"
 
       - script: |
@@ -33,8 +35,16 @@ jobs:
     dependsOn: Setup
     steps:
       - script: |
+          echo "Checking if test directory exists..."
+          if not exist test (
+            echo "ERROR: Test directory not found!"
+            exit /b 1
+          )
+        displayName: "Verify Test Directory"
+
+      - script: |
           echo "Running Tests in Parallel..."
-          .\venv\Scripts\activate && pabot --processes 4 --outputdir results test/
+          python -m pabot --processes 4 --outputdir results test/
         displayName: "Run Tests with Pabot (Parallel Execution)"
 
       - script: |
