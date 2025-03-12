@@ -22,7 +22,7 @@ jobs:
             python -m venv venv
           )
           echo "Installing Dependencies..."
-          .\venv\Scripts\activate.bat && python -m pip install --no-cache-dir robotframework robotframework-seleniumlibrary robotframework-csvlibrary robotframework-pabot
+          call venv\Scripts\activate.bat && python -m pip install --no-cache-dir robotframework robotframework-seleniumlibrary robotframework-csvlibrary robotframework-pabot
         displayName: "Setup Virtual Environment & Install Dependencies"
 
       - script: |
@@ -43,8 +43,13 @@ jobs:
         displayName: "Verify Test Directory"
 
       - script: |
+          echo "Checking if pabot is installed..."
+          call venv\Scripts\activate.bat && python -m pip show pabot
+        displayName: "Check Pabot Installation"
+
+      - script: |
           echo "Running Tests in Parallel..."
-          .\venv\Scripts\activate.bat && python -m pabot --processes 4 --outputdir results test/
+          call venv\Scripts\activate.bat && python -m pabot --processes 4 --outputdir results test/
         displayName: "Run Tests with Pabot (Parallel Execution)"
 
       - script: |
