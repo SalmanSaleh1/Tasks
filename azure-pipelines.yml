@@ -5,31 +5,34 @@ pool:
   name: MyPool
 
 steps:
+  # Checkout the repository
   - checkout: self
     displayName: 'Checkout Code'
 
+  # Install Python 3.9, dependencies and setup virtual environment
   - script: |
-      echo "Setting up Python environment"
+      echo "Installing Python 3.9 and dependencies"
+      choco install python --version 3.9 -y
       python -m venv venv
-      .\venv\Scripts\activate
-      python -m pip install --upgrade pip
-      pip install -r requirements.txt
-    displayName: 'Set Up Python Environment'
+      call .\venv\Scripts\activate
+      pip install --upgrade pip
+      pip install robotframework robotframework-seleniumlibrary robotframework-csvlibrary
+    displayName: 'Install Python & Dependencies'
 
+  # Install Google Chrome and ChromeDriver
   - script: |
-      echo "Installing Robot Framework and dependencies"
-      pip install robotframework
-      pip install robotframework-seleniumlibrary
-      pip install robotframework-csvlibrary
-    displayName: 'Install Robot Framework & Dependencies'
-
-  - script: |
-      echo "Installing Chrome and ChromeDriver"
       choco install googlechrome chromedriver -y
     displayName: 'Install Chrome & ChromeDriver'
 
+  # Debug test directory (optional)
   - script: |
-      echo "Running Robot Framework tests"
-      .\venv\Scripts\activate
-      robot -d Results test/
-    displayName: 'Run Robot Framework Tests'
+      echo "Checking test directory and files..."
+      dir test
+    displayName: 'Debug: List Test Files'
+
+  # Run Robot Framework tests in parallel
+  - script: |
+      echo "Running tests in parallel"
+      call .\venv\Scripts\activate
+      robot --console verbose --parallel 4 test/
+    displayName: 'Run Robot Framework Tests in Parallel'
