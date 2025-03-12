@@ -4,30 +4,32 @@ trigger:
 pool:
   name: MyPool
 
-jobs:
-  - job: InstallDependencies
-    displayName: 'Install Dependencies'
-    pool:
-      name: MyPool
-    steps:
-      - checkout: self
-        displayName: 'Checkout Code'
-      - task: UsePythonVersion@0
-        inputs:
-          versionSpec: '3.9'
-          addToPath: true
-      - script: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-        displayName: 'Install Python Dependencies'
+steps:
+  - checkout: self
+    displayName: 'Checkout Code'
 
-  - job: RunTests
+  - script: |
+      echo "Setting up Python environment"
+      python -m venv venv
+      .\venv\Scripts\activate
+      python -m pip install --upgrade pip
+      pip install -r requirements.txt
+    displayName: 'Set Up Python Environment'
+
+  - script: |
+      echo "Installing Robot Framework and dependencies"
+      pip install robotframework
+      pip install robotframework-seleniumlibrary
+      pip install robotframework-csvlibrary
+    displayName: 'Install Robot Framework & Dependencies'
+
+  - script: |
+      echo "Installing Chrome and ChromeDriver"
+      choco install googlechrome chromedriver -y
+    displayName: 'Install Chrome & ChromeDriver'
+
+  - script: |
+      echo "Running Robot Framework tests"
+      .\venv\Scripts\activate
+      robot -d Results test/
     displayName: 'Run Robot Framework Tests'
-    dependsOn: []
-    pool:
-      name: MyPool
-    steps:
-      - script: |
-          robot -d Results Tests/
-        displayName: 'Run Robot Framework Tests'
-        continueOnError: true
