@@ -21,6 +21,7 @@ steps:
       pip install robotframework-seleniumlibrary
       pip install robotframework-csvlibrary
       pip install pytest pytest-xdist
+      pip install robotframework-parallel
     displayName: 'Install Robot Framework & Dependencies'
  
   - script: |
