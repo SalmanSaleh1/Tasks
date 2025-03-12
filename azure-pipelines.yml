@@ -30,7 +30,7 @@ steps:
       pip install robotframework
       pip install robotframework-seleniumlibrary
       pip install robotframework-csvlibrary
-      pip install pabot
+      pip install robotframework-pabot  # Use robotframework-pabot instead of pabot
 
       echo "Installed packages:"
       pip list
@@ -51,11 +51,11 @@ steps:
       dir test
     displayName: 'Debug: List Test Files'
 
-  # Step 6: Run Robot Framework tests in parallel using Pabot
+  # Step 6: Run Robot Framework tests in parallel using robotframework-pabot
   - script: |
       echo "Running Robot Framework tests in parallel..."
       call .\venv\Scripts\activate
-      pabot --processes 4 --outputdir result test/
+      robotframework-pabot --processes 4 --outputdir result test/
       echo "Test execution complete."
     displayName: 'Run Robot Framework Tests in Parallel'
     continueOnError: false
