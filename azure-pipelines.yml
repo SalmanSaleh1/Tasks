@@ -17,13 +17,21 @@ jobs:
         displayName: "Install Python"
 
       - script: |
+          echo "Creating Virtual Environment if not exists..."
           if not exist venv (
-            echo "Virtual Environment not found. Creating..."
             python -m venv venv
+            echo "Virtual Environment created."
+          ) else (
+            echo "Virtual Environment already exists."
           )
-          echo "Installing Dependencies..."
-          call venv\Scripts\activate.bat && python -m pip install --no-cache-dir robotframework robotframework-seleniumlibrary robotframework-csvlibrary robotframework-pabot
-        displayName: "Setup Virtual Environment & Install Dependencies"
+        displayName: "Setup Virtual Environment"
+
+      - script: |
+          echo "Activating Virtual Environment and Installing Dependencies..."
+          call venv\Scripts\activate.bat
+          python -m pip install --upgrade pip
+          pip install robotframework robotframework-seleniumlibrary robotframework-csvlibrary robotframework-pabot
+        displayName: "Install Robot Framework and Dependencies"
 
       - script: |
           echo "Installing Chrome & ChromeDriver..."
@@ -39,20 +47,24 @@ jobs:
           if not exist test (
             echo "ERROR: Test directory not found!"
             exit /b 1
+          ) else (
+            echo "Test directory found."
           )
         displayName: "Verify Test Directory"
 
       - script: |
-          echo "Checking if pabot is installed..."
-          call venv\Scripts\activate.bat && python -m pip show pabot
-        displayName: "Check Pabot Installation"
+          echo "Verifying pabot installation..."
+          call venv\Scripts\activate.bat
+          python -m pip show pabot || echo "pabot is not installed!"
+        displayName: "Verify Pabot Installation"
 
       - script: |
-          echo "Running Tests in Parallel..."
-          call venv\Scripts\activate.bat && python -m pabot --processes 4 --outputdir results test/
+          echo "Running Tests in Parallel with Pabot..."
+          call venv\Scripts\activate.bat
+          python -m pabot --processes 4 --outputdir results test/
         displayName: "Run Tests with Pabot (Parallel Execution)"
 
       - script: |
-          echo "Listing Test Results..."
+          echo "Listing the results directory..."
           dir results
         displayName: "Debug: List Test Results"
