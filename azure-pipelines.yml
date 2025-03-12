@@ -18,12 +18,12 @@ steps:
   - script: |
       python -m venv venv
       call .\venv\Scripts\activate
+      python -m pip install --upgrade pip  # Upgrade pip
       pip install robotframework
       pip install robotframework-seleniumlibrary
       pip install robotframework-csvlibrary
       pip install pabot  # Install Pabot for parallel execution
     displayName: 'Install Robot Framework & Dependencies'
-
 
   # Install Chrome and ChromeDriver
   - script: |
