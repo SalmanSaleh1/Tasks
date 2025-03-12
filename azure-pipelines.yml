@@ -22,7 +22,7 @@ steps:
       pip install robotframework
       pip install robotframework-seleniumlibrary
       pip install robotframework-csvlibrary
-      pip install pabot  # Install Pabot for parallel execution
+       pip install -U robotframework-pabot  # Install Pabot for parallel execution
     displayName: 'Install Robot Framework & Dependencies'
 
   # Install Chrome and ChromeDriver
