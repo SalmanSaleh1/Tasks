@@ -60,7 +60,7 @@ steps:
 
       # Verify that robotframework-pabot is installed
       echo "Checking if robotframework-pabot is installed..."
-      pip show robotframework-pabot || pip install robotframework-pabot
+      pip show robotframework-pabot || echo "robotframework-pabot is not installed."
 
       # Run the tests using robotframework-pabot
       echo "Executing tests in parallel..."
