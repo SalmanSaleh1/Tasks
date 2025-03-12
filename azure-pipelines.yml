@@ -5,8 +5,8 @@ pool:
   name: MyPool  # Replace with your agent pool name
 
 jobs:
-  - job: InstallDependencies
-    displayName: 'Install Dependencies'
+  - job: RunTestsParallel
+    displayName: 'Run Tests on Two Devices in Parallel'
     steps:
       - checkout: self
         displayName: 'Checkout Code'
@@ -27,28 +27,13 @@ jobs:
           choco install googlechrome chromedriver -y
         displayName: 'Install Chrome & ChromeDriver'
 
-  - job: RunTests_Device1
-    displayName: 'Run Tests on Device 1'
-    dependsOn: InstallDependencies
-    steps:
-      - checkout: self
-        displayName: 'Checkout Code'
-
       - script: |
           echo "Running tests on Device 1..."
-          .\venv\Scripts\activate
-          python -m robot --variable DEVICE_NAME:Device1 test/
-        displayName: 'Run Tests on Device 1'
-
-  - job: RunTests_Device2
-    displayName: 'Run Tests on Device 2'
-    dependsOn: InstallDependencies
-    steps:
-      - checkout: self
-        displayName: 'Checkout Code'
-
-      - script: |
+          start /B cmd /c ".\venv\Scripts\activate && python -m robot --variable DEVICE_NAME:Device1 test/" 
+          
           echo "Running tests on Device 2..."
-          .\venv\Scripts\activate
-          python -m robot --variable DEVICE_NAME:Device2 test/
-        displayName: 'Run Tests on Device 2'
+          start /B cmd /c ".\venv\Scripts\activate && python -m robot --variable DEVICE_NAME:Device2 test/"
+          
+          echo "Waiting for parallel tests to finish..."
+          wait
+        displayName: 'Run Tests on Both Devices in Parallel'
