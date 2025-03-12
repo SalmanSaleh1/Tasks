@@ -1,48 +1,39 @@
 trigger:
   - master
-
+ 
 pool:
   name: MyPool
-
-jobs:
-  - job: RunRobotTests
-    displayName: 'Run Robot Framework Tests'
-    strategy:
-      parallel: 2  # Adjust based on available agents
-    steps:
-      - task: UsePythonVersion@0
-        inputs:
-          versionSpec: '3.9'
-          addToPath: true
-
-      - script: |
-          echo "Setting up Python environment and installing dependencies..."
-          python -m venv venv
-          .\venv\Scripts\activate
-          pip install --upgrade pip
-          pip install -r requirements.txt
-        displayName: 'Set Up Python Environment'
-
-      - script: |
-          echo "Installing Chrome and ChromeDriver..."
-          choco install googlechrome chromedriver -y
-        displayName: 'Install Chrome & ChromeDriver'
-
-      - script: |
-          echo "Running Robot Framework tests in parallel..."
-          .\venv\Scripts\activate
-          pabot --processes 2 --outputdir $(Build.ArtifactStagingDirectory)\Results test/
-        displayName: 'Run Robot Framework Tests in Parallel'
-
-      - script: |
-          echo "Creating Results directory..."
-          mkdir $(Build.ArtifactStagingDirectory)\Results
-        displayName: 'Create Results Directory'
-
-      - task: PublishBuildArtifacts@1
-        displayName: 'Publish Test Results'
-        inputs:
-          PathtoPublish: '$(Build.ArtifactStagingDirectory)\Results'
-          ArtifactName: 'RobotFrameworkReports'
-          publishLocation: 'Container'
-        condition: succeededOrFailed()
+ 
+steps:
+  - checkout: self
+    displayName: 'Checkout Code'
+ 
+  - script: |
+      echo "Installing Python 3.9"
+      choco install python --version 3.9 -y
+    displayName: 'Install Python'
+ 
+  - script: |
+      echo "Setting up Virtual Environment"
+      python -m venv venv
+      call .\venv\Scripts\activate && pip install --upgrade pip
+      pip install robotframework
+      pip install robotframework-seleniumlibrary
+      pip install robotframework-csvlibrary
+      pip install pytest pytest-xdist
+    displayName: 'Install Robot Framework & Dependencies'
+ 
+  - script: |
+      echo "Installing Google Chrome and ChromeDriver"
+      choco install googlechrome chromedriver -y
+    displayName: 'Install Chrome & ChromeDriver'
+ 
+  - script: |
+      echo "Checking test directory and files..."
+      dir test
+    displayName: 'Debug: List Test Files'
+ 
+  - script: |
+      echo "Running tests with parallel execution"
+      call .\venv\Scripts\activate && robot --console verbose --argumentfile tests/robot_settings.txt --parallel 4 tests/
+    displayName: 'Run All Robot Framework Test Cases (Parallel)'
