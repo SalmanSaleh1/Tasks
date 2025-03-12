@@ -17,11 +17,11 @@ jobs:
         displayName: "Install Python"
 
       - script: |
-          echo "Installing Dependencies..."
+          echo "Setting up Virtual Environment..."
           python -m venv venv
-          .\venv\Scripts\activate && pip install --upgrade pip
-          pip install robotframework robotframework-seleniumlibrary robotframework-csvlibrary pabot
-        displayName: "Install Robot Framework & Dependencies"
+          echo "Installing Dependencies..."
+          .\venv\Scripts\activate && python -m pip install --no-cache-dir robotframework robotframework-seleniumlibrary robotframework-csvlibrary pabot
+        displayName: "Setup Virtual Environment & Install Dependencies"
 
       - script: |
           echo "Installing Chrome & ChromeDriver..."
