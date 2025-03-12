@@ -5,33 +5,28 @@ pool:
   name: MyPool
 
 steps:
-  # Checkout the repository
   - checkout: self
     displayName: 'Checkout Code'
 
-  # Install dependencies and set up virtual environment
+  - script: |
+      echo "Installing Python 3.9"
+      choco install python --version 3.9 -y
+    displayName: 'Install Python'
+
   - script: |
       echo "Setting up virtual environment and installing dependencies"
       python -m venv venv
       call .\venv\Scripts\activate
       pip install --upgrade pip
-      pip install robotframework pytest pytest-xdist robotframework-pytest
+      pip install robotframework
+      pip install robotframework-seleniumlibrary
+      pip install robotframework-csvlibrary
+      pip install pytest
+      pip install pytest-xdist
     displayName: 'Install Dependencies & Set Up Virtual Environment'
 
-  # Install Google Chrome and ChromeDriver
   - script: |
-      choco install googlechrome chromedriver -y
-    displayName: 'Install Chrome & ChromeDriver'
-
-  # Debug test directory (optional)
-  - script: |
-      echo "Checking test directory and files..."
-      dir test
-    displayName: 'Debug: List Test Files'
-
-  # Run Robot Framework tests in parallel using pytest-xdist
-  - script: |
-      echo "Running tests in parallel with pytest-xdist"
+      echo "Running tests in parallel"
       call .\venv\Scripts\activate
-      pytest --maxfail=5 --disable-warnings --tb=short -n 4 test/
-    displayName: 'Run Robot Framework Tests in Parallel with pytest-xdist'
+      pytest -n auto test/
+    displayName: 'Run Robot Framework Tests in Parallel'
